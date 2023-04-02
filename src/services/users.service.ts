@@ -6,39 +6,34 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async getUsers() {
-    const users = await this.prisma.user.findMany()
+    const users = await this.prisma.user.findMany();
     return {
-      data: users
-    }
+      data: users,
+    };
   }
 
   async getUserById(id: string) {
-
     const user = await this.prisma.user.findUnique({
       where: {
-        id: id
-      }
-    })
-    return user
-
+        id: id,
+      },
+    });
+    return user;
   }
   async getUserByEmail(email: string) {
-
     const user = await this.prisma.user.findUnique({
       where: {
-        email: email
-      }
-    })
-    return user
-
+        email: email,
+      },
+    });
+    return user;
   }
 
   async createUser(body: userDTO) {
-    const { name, email, password } = body
+    const { name, email, password } = body;
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);
 
@@ -48,27 +43,26 @@ export class UserService {
           id: randomUUID(),
           name,
           email,
-          password: hash
-        }
-      })
+          password: hash,
+        },
+      });
       return {
-        data: user
-      }
+        data: user,
+      };
     } catch (error) {
       return {
         error,
-      }
+      };
     }
   }
 
-
   async editUser(body: userDTO) {
-    const { id, name, email, password, role, cpf } = body
-    const updateAt = new Date(Date.now())
+    const { id, name, email, password, role, cpf } = body;
+    const updateAt = new Date(Date.now());
     try {
       const user = await this.prisma.user.update({
         where: {
-          id: id
+          id: id,
         },
         data: {
           name,
@@ -76,33 +70,31 @@ export class UserService {
           password,
           cpf,
           role,
-          updateAt
-        }
-      })
-      return user
-
+          updateAt,
+        },
+      });
+      return user;
     } catch (error) {
       return {
         error,
-      }
+      };
     }
   }
-
 
   async deleteUser(id: string) {
     try {
       const user = await this.prisma.user.delete({
         where: {
-          id: id
-        }
-      })
+          id: id,
+        },
+      });
       return {
-        data: user
-      }
+        data: user,
+      };
     } catch (error) {
       return {
         error,
-      }
+      };
     }
   }
 }

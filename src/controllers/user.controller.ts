@@ -23,7 +23,7 @@ export class UserController {
     return await this.userService.getUserById(id)
   }
   
-  @UseGuards(AuthGuard)
+
   @Post('users')
   async createUser(@Body() body: userDTO) {
     return await this.userService.createUser(body)

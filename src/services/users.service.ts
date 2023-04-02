@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { PrismaService } from 'src/database/prisma.service';
 import { userDTO } from 'src/dto/user-dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -29,7 +30,7 @@ export class UserService {
 
     const user = await this.prisma.user.findUnique({
       where: {
-        id: email
+        email: email
       }
     })
     return user
@@ -38,13 +39,16 @@ export class UserService {
 
   async createUser(body: userDTO) {
     const { name, email, password } = body
+    const saltOrRounds = 10;
+    const hash = await bcrypt.hash(password, saltOrRounds);
+
     try {
       const user = await this.prisma.user.create({
         data: {
           id: randomUUID(),
           name,
           email,
-          password
+          password: hash
         }
       })
       return {

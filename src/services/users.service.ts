@@ -64,6 +64,7 @@ export class UserService {
 
   async editUser(body: userDTO) {
     const { id, name, email, password, role, cpf } = body
+    const updateAt = new Date(Date.now())
     try {
       const user = await this.prisma.user.update({
         where: {
@@ -74,12 +75,12 @@ export class UserService {
           email,
           password,
           cpf,
-          role
+          role,
+          updateAt
         }
       })
-      return {
-        data: user
-      }
+      return user
+
     } catch (error) {
       return {
         error,
